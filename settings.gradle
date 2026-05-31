@@ -1,0 +1,22 @@
+pluginManagement {
+    repositories {
+        maven { url "https://maven.fabricmc.net/" }
+        gradlePluginPortal()
+        mavenCentral()
+    }
+}
+
+rootProject.name = "slashannounce"
+
+include "common"
+include "versions:1.20.1"
+include "versions:1.20.5"
+include "versions:1.21"
+include "versions:1.21.1"
+include "versions:1.21.2"
+include "versions:1.21.4"
+include "versions:1.21.6"
+include "versions:1.21.9"
+include "versions:1.21.11"
+// versions:26.1.2 is intentionally NOT included — it is a quarantined sibling
+// build (JDK 25 / Loom 1.15.5 / Gradle 9.4.1) shelled out via the root build26 task.

@@ -1,0 +1,14 @@
+plugins {
+    id "java-library"
+}
+
+repositories {
+    mavenCentral()
+}
+
+// MC-agnostic, pure Java 17. Gson + SLF4J are provided at runtime by Minecraft /
+// the Fabric loader, so they are compileOnly here (never bundled by `common`).
+dependencies {
+    compileOnly "org.slf4j:slf4j-api:2.0.9"
+    compileOnly "com.google.code.gson:gson:2.10.1"
+}

@@ -1,0 +1,61 @@
+// Quarantined Band I build. Runs under its own Gradle 9.4.1 wrapper and JDK 25.
+// The parent multi-project build at ../../ shells out to this composite via the
+// `build26` task in the root build.gradle — it does NOT include this composite as
+// a subproject (Loom 1.15.5 can't coexist with the root's Loom 1.13.6).
+
+plugins {
+    id "java"
+    id "net.fabricmc.fabric-loom" version "1.15.5"
+}
+
+group = project.maven_group
+version = ""
+
+repositories {
+    mavenCentral()
+    maven { url "https://maven.fabricmc.net/" }
+}
+
+java {
+    withSourcesJar()
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(25)
+    }
+}
+
+tasks.withType(JavaCompile).configureEach {
+    it.options.release = 25
+    it.options.encoding = "UTF-8"
+}
+
+base {
+    archivesName = "${project.archives_base_name}-${project.mod_version}+mc${project.minecraft_version}"
+}
+
+// Shared source from the parent tree. This composite can't use project(":common"),
+// so it compiles the common + mc-src trees directly (DESIGN §11).
+sourceSets.main.java.srcDirs += [
+        file("../../common/src/main/java"),
+        file("../../mc-src/src/main/java"),
+]
+
+dependencies {
+    minecraft "com.mojang:minecraft:${project.minecraft_version}"
+    // No mappings — 26.1 ships unobfuscated.
+    implementation "net.fabricmc:fabric-loader:${project.loader_version}"
+    implementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_api_version}"
+
+    // Provided at runtime by Minecraft / the loader; needed here only because we
+    // compile the common sources inline (no :common project dependency).
+    compileOnly "com.google.code.gson:gson:2.10.1"
+    compileOnly "org.slf4j:slf4j-api:2.0.9"
+}
+
+processResources {
+    inputs.property "version", project.mod_version
+    inputs.property "minecraft_version", project.minecraft_version
+
+    filesMatching("fabric.mod.json") {
+        expand "version": project.mod_version, "minecraft_version": project.minecraft_version
+    }
+}

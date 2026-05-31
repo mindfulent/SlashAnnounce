@@ -1,0 +1,13 @@
+{
+  "required": true,
+  "package": "dev.blockacademy.slashannounce.mixin",
+  "compatibilityLevel": "JAVA_21",
+  "mixins": [
+    "SleepMixin",
+    "SignMixin"
+  ],
+  "client": [],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

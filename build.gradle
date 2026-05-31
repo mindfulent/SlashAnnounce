@@ -1,0 +1,97 @@
+plugins {
+    id "java"
+    id "fabric-loom" version "1.13.6" apply false
+}
+
+allprojects {
+    group = project.maven_group
+    version = project.mod_version
+
+    repositories {
+        mavenCentral()
+        maven { url "https://maven.fabricmc.net/" }
+    }
+}
+
+subprojects {
+    apply plugin: "java"
+
+    java {
+        withSourcesJar()
+    }
+
+    tasks.withType(JavaCompile).configureEach {
+        it.options.encoding = "UTF-8"
+    }
+}
+
+project(":common") {
+    tasks.withType(JavaCompile).configureEach {
+        it.options.release = 17
+    }
+    java {
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
+    }
+}
+
+// Detect host OS so we can pick gradlew vs gradlew.bat when shelling out to the
+// quarantined Band I (versions/26.1.2 — JDK 25 + Loom 1.15.5 + Gradle 9.4.1,
+// incompatible with this composite's Loom 1.13.6).
+def isWindows = System.getProperty("os.name").toLowerCase(java.util.Locale.ROOT).contains("windows")
+
+// Quarantined Band I (MC 26.1.2). Lives in versions/26.1.2/ with its own Gradle
+// wrapper + Loom 1.15.5 + JDK 25 toolchain. We shell out rather than including it
+// as a subproject (its Loom version can't coexist with the root's in one build).
+tasks.register("build26", Exec) {
+    group = "build"
+    description = "Builds Band I (MC 26.1.2) via its own quarantined wrapper."
+    workingDir = file("versions/26.1.2")
+    def wrapper = file("versions/26.1.2/${isWindows ? 'gradlew.bat' : 'gradlew'}").absolutePath
+    commandLine = isWindows
+            ? ["cmd", "/c", wrapper, "build", "--no-daemon"]
+            : [wrapper, "build", "--no-daemon"]
+}
+
+tasks.register("buildAll") {
+    group = "build"
+    description = "Builds all version band JARs and collects them into build/release/"
+    dependsOn ":versions:1.20.1:build"   // Band A: Java 17
+    dependsOn ":versions:1.20.5:build"   // Band B
+    dependsOn ":versions:1.21:build"     // Band C
+    dependsOn ":versions:1.21.1:build"   // Band C: TBA server target
+    dependsOn ":versions:1.21.2:build"   // Band D
+    dependsOn ":versions:1.21.4:build"   // Band D
+    dependsOn ":versions:1.21.6:build"   // Band E/F
+    dependsOn ":versions:1.21.9:build"   // Band G
+    dependsOn ":versions:1.21.11:build"  // Band H
+    dependsOn "build26"                  // Band I: MC 26.1.2 (quarantined; TBS target)
+
+    doLast {
+        def releaseDir = layout.buildDirectory.dir("release").get().asFile
+        releaseDir.deleteDir()
+        releaseDir.mkdirs()
+
+        def bands = ["1.20.1", "1.20.5", "1.21", "1.21.1", "1.21.2", "1.21.4", "1.21.6", "1.21.9", "1.21.11"]
+        bands.each { band ->
+            def libsDir = project(":versions:${band}").layout.buildDirectory.dir("libs").get().asFile
+            libsDir.listFiles()?.each { jar ->
+                if (jar.name.endsWith(".jar") && !jar.name.contains("-dev") && !jar.name.contains("-sources")) {
+                    java.nio.file.Files.copy(jar.toPath(), new File(releaseDir, jar.name).toPath())
+                }
+            }
+        }
+
+        // Band I lives outside the composite; its JARs sit in versions/26.1.2/build/libs/.
+        def quarantinedLibs = file("versions/26.1.2/build/libs")
+        quarantinedLibs.listFiles()?.each { jar ->
+            if (jar.name.endsWith(".jar") && !jar.name.contains("-dev") && !jar.name.contains("-sources")) {
+                def dest = new File(releaseDir, jar.name)
+                if (dest.exists()) dest.delete()
+                java.nio.file.Files.copy(jar.toPath(), dest.toPath())
+            }
+        }
+
+        println "Collected ${releaseDir.listFiles()?.length ?: 0} JARs in ${releaseDir.path}"
+    }
+}
