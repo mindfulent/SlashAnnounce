@@ -4,7 +4,11 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Status
 
-**Pre-implementation.** This repo currently contains only `docs/DESIGN.md` (a complete, reviewed design) — no source, build files, or git history yet. `docs/DESIGN.md` is the authoritative spec; read it in full before writing code. Repo will be `mindfulent/SlashAnnounce`; package/group `dev.blockacademy.slashannounce`.
+**v0.1.0 implemented** — the intercept framework plus the `sleep` and `sign` intercepts, the 10-band build skeleton, and the backend/slashAI integration. Bands **C (1.21.1)** and **I (26.1.2)** are built and load-verified (both reach "SlashAnnounce ready — 2 intercept(s) active." with mixins applied); the other 7 bands are scaffolded but not yet built. `docs/DESIGN.md` is the authoritative spec. Repo `mindfulent/SlashAnnounce`; package/group `dev.blockacademy.slashannounce`.
+
+**Cross-repo state:** the theblockacademy backend (`announce` pattern/route/`mc_audit`) and slashAI (`/server/announce` + renderers) changes live on local feature branches `slashannounce-announce-events` / `slashannounce-announce-handler` — committed, **not pushed** (push = prod deploy). The full live pipeline test (real Discord embed + `mc_audit` row) is the remaining step.
+
+**Per-band reality (learned during impl):** the mixin *targets* (`wakeUpAllPlayers`, `updateSignText`) are stable across all bands, but 26.1.x ("Tiny Takeover") reworked supporting APIs — gamerules moved to `world.level.gamerules` with typed `GameRule<T>` read via `GameRules#get` and daylight renamed `RULE_DAYLIGHT`→`ADVANCE_TIME`, and `ResourceKey#location()`→`identifier()`. Those are the *only* divergences, isolated in the per-generation `Compat` seam (`mc-compat-classic/` vs `versions/26.1.2/.../compat/Compat.java`). Player names use the stable `Entity#getScoreboardName()`. Everything else in `mc-src/` compiles verbatim on every band.
 
 The parent `../CLAUDE.md` (Projects-wide) governs cross-project rules — notably: **never deploy to production without explicit approval**, no `Co-Authored-By: Claude` trailer on commits, Java 21 via Prism's bundled JDK, and the slashAI MCP tools for Discord posts.
 
