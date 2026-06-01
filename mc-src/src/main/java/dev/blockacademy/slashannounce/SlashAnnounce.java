@@ -1,6 +1,7 @@
 package dev.blockacademy.slashannounce;
 
 import dev.blockacademy.slashannounce.common.SlashAnnounceConfig;
+import dev.blockacademy.slashannounce.intercept.DeathIntercept;
 import dev.blockacademy.slashannounce.intercept.Intercept;
 import dev.blockacademy.slashannounce.intercept.SignIntercept;
 import dev.blockacademy.slashannounce.intercept.SleepIntercept;
@@ -25,7 +26,8 @@ public class SlashAnnounce implements ModInitializer {
 
     private final List<Intercept> intercepts = List.of(
             new SleepIntercept(),
-            new SignIntercept()
+            new SignIntercept(),
+            new DeathIntercept()
     );
 
     @Override

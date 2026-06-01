@@ -19,12 +19,13 @@ already relays them. But a slept-through **night skip** is pure-vanilla and logs
 nothing, **sign contents** never hit the console, and most mod/datapack events are
 invisible too. SlashAnnounce surfaces any chosen event with a tiny, local change.
 
-## v1 intercepts
+## Intercepts
 
 | `type` | Fires when | Payload |
 |--------|-----------|---------|
 | `sleep` | the server skips a night (`ServerLevel#wakeUpAllPlayers`) | `{sleepers, players?, dimension, timeAdvanced}` |
 | `sign`  | a sign is **placed** (first write only, via the editor-UUID gate) | `{player, x, y, z, dimension, side, lines[4]}` |
+| `death` | a player dies (`ServerPlayer#die`) | `{player, message, cause, killer?, x, y, z, dimension}` |
 
 Each intercept is config-gated in `config/slashannounce.json` (created on first
 run); the global `enabled` flag is a master kill-switch.

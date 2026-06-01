@@ -4,7 +4,9 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Status
 
-**v0.1.0 implemented** — the intercept framework plus the `sleep` and `sign` intercepts, the 10-band build skeleton, and the backend/slashAI integration. Bands **C (1.21.1)** and **I (26.1.2)** are built and load-verified (both reach "SlashAnnounce ready — 2 intercept(s) active." with mixins applied); the other 7 bands are scaffolded but not yet built. `docs/DESIGN.md` is the authoritative spec. Repo `mindfulent/SlashAnnounce`; package/group `dev.blockacademy.slashannounce`.
+**v0.2.0 implemented** — the intercept framework plus the `sleep`, `sign`, and `death` intercepts, the 10-band build skeleton, and the backend/slashAI integration. Bands **C (1.21.1)** and **I (26.1.2)** are built and load-verified (both reach "SlashAnnounce ready — 3 intercept(s) active." with mixins applied); the other 7 bands are scaffolded but not yet built. `docs/DESIGN.md` is the authoritative spec (note: it predates the `death` intercept). Repo `mindfulent/SlashAnnounce`; package/group `dev.blockacademy.slashannounce`.
+
+`death` (added v0.2.0) hooks `ServerPlayer#die(DamageSource)` and emits the vanilla death message + machine-readable `cause` (`getMsgId`) + killer + location — so the bridge never string-matches death messages. All its symbols are stable 1.20.1→26.1.2 (no `Compat` entry needed).
 
 **Cross-repo state:** the theblockacademy backend (`announce` pattern/route/`mc_audit`) and slashAI (`/server/announce` + renderers) changes live on local feature branches `slashannounce-announce-events` / `slashannounce-announce-handler` — committed, **not pushed** (push = prod deploy). The full live pipeline test (real Discord embed + `mc_audit` row) is the remaining step.
 

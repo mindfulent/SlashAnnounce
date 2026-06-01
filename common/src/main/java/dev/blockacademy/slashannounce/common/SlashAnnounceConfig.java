@@ -26,7 +26,8 @@ public final class SlashAnnounceConfig {
               "enabled": true,
               "intercepts": {
                 "sleep": { "enabled": true, "debounceSeconds": 10, "includePlayerNames": true, "overworldOnly": true },
-                "sign":  { "enabled": true, "includeBackSide": false, "maxLineLength": 120 }
+                "sign":  { "enabled": true, "includeBackSide": false, "maxLineLength": 120 },
+                "death": { "enabled": true, "includeMessage": true }
               }
             }
             """;
