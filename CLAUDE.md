@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Status
 
-**v0.2.0 implemented** — the intercept framework plus the `sleep`, `sign`, and `death` intercepts, the 10-band build skeleton, and the backend/slashAI integration. Bands **C (1.21.1)** and **I (26.1.2)** are built and load-verified (both reach "SlashAnnounce ready — 3 intercept(s) active." with mixins applied); the other 7 bands are scaffolded but not yet built. `docs/DESIGN.md` is the authoritative spec (note: it predates the `death` intercept). Repo `mindfulent/SlashAnnounce`; package/group `dev.blockacademy.slashannounce`.
+**v0.2.0 implemented** — the intercept framework plus the `sleep`, `sign`, and `death` intercepts, the 10-band build skeleton, and the backend/slashAI integration. Bands **C (1.21.1)** and **I (26.1.2)** are built and load-verified (both reach "SlashAnnounce ready — 3 intercept(s) active." with mixins applied); the other 7 bands are scaffolded but not yet built. `docs/DESIGN.md` is the authoritative spec (note: it predates the `death` intercept). Repo `slashdaemon/SlashAnnounce`; package/group `dev.blockacademy.slashannounce`.
 
 `death` (added v0.2.0) hooks `ServerPlayer#die(DamageSource)` and emits the vanilla death message + machine-readable `cause` (`getMsgId`) + killer + location — so the bridge never string-matches death messages. All its symbols are stable 1.20.1→26.1.2 (no `Compat` entry needed).
 
@@ -27,7 +27,7 @@ Intercept ─► Emitter.emit(type, payload) ─► "[SlashAnnounce/v1] <type> <
 
 The mod is one of **three coordinated changes** across repos; the design's whole point is that the backend and slashAI changes are *generic* (added once), so most new intercepts touch only a single slashAI renderer:
 
-- **This mod** — emits the console line. (`mindfulent/SlashAnnounce`)
+- **This mod** — emits the console line. (`slashdaemon/SlashAnnounce`)
 - **theblockacademy backend** — ONE generic regex in `minecraftConsole.patterns.ts` + a route/limit in `minecraftDispatcher.ts` + `mc_audit` persist. (`../theblockacademy`)
 - **slashAI** — ONE generic `handle_mc_announce` handler + an `ANNOUNCE_RENDERERS` entry per `kind`. (`../slashAI`)
 

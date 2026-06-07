@@ -6,8 +6,8 @@
   "description": "Server-side intercept framework that surfaces console-invisible Minecraft events (night skips, sign placements) to the Discord bridge. No client install, no secrets, no network egress.",
   "authors": ["Slash"],
   "contact": {
-    "homepage": "https://github.com/mindfulent/SlashAnnounce",
-    "sources": "https://github.com/mindfulent/SlashAnnounce"
+    "homepage": "https://github.com/slashdaemon/SlashAnnounce",
+    "sources": "https://github.com/slashdaemon/SlashAnnounce"
   },
   "license": "CC-BY-4.0",
   "environment": "server",

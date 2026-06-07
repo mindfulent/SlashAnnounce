@@ -2,7 +2,7 @@
 
 **Status:** Draft for review (v2 — multi-version, research-informed)
 **Type:** Server-side Fabric mod, multi-band **MC 1.20.1 → 26.1.2** (priority: 26.1.2)
-**Repo:** `mindfulent/SlashAnnounce`
+**Repo:** `slashdaemon/SlashAnnounce`
 **Package / group:** `dev.blockacademy.slashannounce`
 
 ---
@@ -12,7 +12,7 @@
 | Decision | Choice |
 |---|---|
 | Transport | **Console emission** (mod logs structured lines; backend's existing Pterodactyl-WS observer parses them). HTTP sink documented as a future per-intercept option, not built in v1. |
-| Repo | New `mindfulent/SlashAnnounce` (generic; can serve TBA's 1.21.1 server later too). |
+| Repo | New `slashdaemon/SlashAnnounce` (generic; can serve TBA's 1.21.1 server later too). |
 | Sign scope | **Placement only** — the first write on a freshly-placed sign, detected via the editor-UUID gate. Re-edits are not announced. |
 | Audit | **Persist** every announce to the backend `mc_audit` table (in addition to the Discord post). |
 | Routing | **Single generic** slashAI route `/server/announce`; a renderer registry keyed by `kind`. |
